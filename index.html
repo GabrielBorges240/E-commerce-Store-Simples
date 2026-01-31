@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-commerce Store</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" />
+
+  <style>
+    :root {
+      --gold-light: #000000;
+      --gold-mid: #ffffff;
+      --green-light: #000000;
+      --green-mid: #ffffff;
+      --green-dark: #000000;
+      --deep-green: #ffffff;
+      --forest: #000000;
+    }
+
+   body {
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #1a1a1a,
+    #2b2b2b,
+    #3b3b3b,
+    #1f1f1f
+  );
+  background-size: 300% 300%;
+  animation: gradientMove 15s ease infinite;
+}
+
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+   
+
+    nav ul li a, nav ul li strong {
+      color: #000000 !important;
+    }
+
+  main.container {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  margin-top: 2rem;
+}
+
+
+    /* 🔍 Filtro */
+#categoryFilter,
+#searchInput,
+#clearFilter {
+   min-width: 220px;
+  min-width: 160px;
+}
+
+
+@media (max-width: 768px) {
+  #filter-container {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  #categoryFilter,
+  #searchInput,
+  #clearFilter {
+    width: 100%;
+  }
+}
+
+
+    #categoryFilter, #searchInput {
+      background-color: rgba(255,255,255,0.1);
+      color: #000000;
+      border: 2px solid var(--gold-light);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    #searchInput::placeholder {
+      color: #000000;
+      
+    }
+
+    #categoryFilter:hover, #searchInput:focus {
+      border-color: var(--gold-mid);
+      box-shadow: 0 0 10px var(--gold-light);
+      outline: none;
+    }
+
+    #clearFilter {
+      background-color: var(--green-mid);
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      animation: goldGlow 3s infinite ease-in-out;
+      transition: 0.3s;
+    }
+
+    #clearFilter:hover {
+      background-color: var(--gold-light);
+      transform: scale(1.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .product-card {
+      background-color: rgba(255,255,255,0.12);
+      border-radius: 12px;
+      border: 2px solid #000000;
+      animation: goldGlow 3s infinite ease-in-out;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1.2rem;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--gold-light);
+    }
+    .product-card {
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+  border: 1px solid var(--gold-mid);
+  animation: goldGlow 3s infinite ease-in-out;
+  transition: all 0.4s ease;
+  color: #ffffff;
+}
+
+
+
+    .product-card img {
+      width: 100%;
+      height: 230px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-top: 0.6rem;
+      margin-bottom: 1rem;
+      padding: 8px;
+      transition: transform 0.4s ease;
+    }
+
+    .product-card:hover img {
+      transform: scale(1.07);
+    }
+
+    .category-label {
+      background-color: var(--green-dark);
+      color: #000000;
+      font-size: 0.9rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .product-card h4 {
+      color: #000000;
+      font-size: 1.1rem;
+      margin: 0.4rem 0;
+      min-height: 48px;
+    }
+
+    .product-card p {
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px var(--gold-light),
+               0 0 20px var(--gold-mid),
+               0 0 30px var(--gold-light);
+  animation: produtosGlow 3s ease-in-out infinite alternate;
+  font-weight: bold;
+  letter-spacing: 1px;
+    }
+
+    button {
+      background-color: var(--gold-mid);
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      animation: goldGlow 3s infinite ease-in-out;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--gold-light);
+      transform: scale(1.05);
+    }
+
+    .product-card button {
+      width: 100%;
+      margin-top: auto;
+    }
+
+    /* Carrinho */
+    #cartItems article {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      background-color: transparent;
+      border-radius: 10px;
+    }
+
+    #cartItems img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 1rem;
+    }
+
+    #cartItems button {
+      width: 120px;
+      background-color: var(--gold-mid);
+      animation: goldGlow 3s infinite ease-in-out;
+      color: #000000;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #000000;
+    }
+
+    footer a, footer small {
+      color: #000000 !important;
+    }
+
+    /* 🔔 Notificação */
+    #notification {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, var(--gold-light), var(--green-mid), var(--green-dark));
+      color: #000000;
+      padding: 1.2rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      text-align: center;
+      font-weight: bold;
+      z-index: 1000;
+      transition: all 0.4s ease;
+      opacity: 0;
+    }
+
+    #notification.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+      nav ul li a, nav ul li strong {
+      color: #000000 !important;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: bold;
+    }
+
+    nav ul li a img {
+  width: 22px;
+  height: 22px;
+  filter:  invert(100%);               /* mantém a cor original (preto) */
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+nav ul li a:hover img {
+  filter: invert(100%);      /* vira branco no hover */
+  transform: scale(1.15);
+}
+
+
+    main.container {
+      background-color: rgba(255,255,255,0.08);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      margin-top: 2rem;
+    }
+    .meu-nome {
+  color: #000000; 
+}
+    /* 🌿 Ajuste visual do menu de categorias */
+#categoryFilter {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #000000;
+  border: 2px solid var(--gold-light);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* 🌿 Aparência das opções do menu de categoria */
+#categoryFilter option {
+  background-color: var(--deep-green);
+  color: #000000;
+  font-weight: bold;
+  border: none;
+}
+
+/* ✨ Quando o usuário passa o cursor sobre uma opção */
+#categoryFilter option:hover,
+#categoryFilter option:focus,
+#categoryFilter option:checked {
+  background-color: #ffff;
+  color: var(--forest);
+}
+
+
+/* 📱 Ajuste automático entre PC e celular */
+@media (max-width: 768px) {
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul li {
+    margin: 0.5rem 0;
+  }
+
+  main.container {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  #filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  #categoryFilter,
+  #searchInput,
+  #clearFilter {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .product-card {
+    padding: 1rem;
+  }
+
+  .product-card img {
+    height: 180px;
+  }
+
+  #cartItems article {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #cartItems img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+/* 💻 Ajustes para telas grandes */
+@media (min-width: 769px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+ 
+@keyframes nameGlow {
+  0% {
+    text-shadow: 0 0 5px var(--gold-light),
+                 0 0 10px var(--gold-mid),
+                 0 0 15px var(--gold-light);
+    color: var(--gold-light);
+  }
+  50% {
+    text-shadow: 0 0 20px var(--gold-light),
+                 0 0 40px var(--gold-mid),
+                 0 0 60px var(--gold-light);
+    color: #ffffff; /* um dourado mais claro no meio do brilho */
+  }
+  100% {
+    text-shadow: 0 0 10px var(--gold-mid),
+                 0 0 25px var(--gold-light),
+                 0 0 40px var(--gold-mid);
+    color: var(--gold-light);
+  }
+}
+.Produtos{
+  color: #000000;
+  text-shadow: 0 0 10px var(--gold-light),
+               0 0 20px var(--gold-mid),
+               0 0 30px var(--gold-light);
+  animation: produtosGlow 3s ease-in-out infinite alternate;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.seucarrinho{
+  color:#000000;
+  text-shadow: 0 0 10px var(--gold-light),
+               0 0 20px var(--gold-mid),
+               0 0 30px var(--gold-light);
+  animation: produtosGlow 3s ease-in-out infinite alternate;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.totalPrice{
+  color:#000000;
+  text-shadow: 0 0 10px var(--gold-light),
+               0 0 20px var(--gold-mid),
+               0 0 30px var(--gold-light);
+  animation: produtosGlow 3s ease-in-out infinite alternate;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+/* 🛒 Nomes dos produtos no carrinho */
+#cartItems h5 {
+  color: #000000; /* texto preto */
+  font-weight: bold;
+}
+
+#cartItems p {
+  color: #000000; /* também deixa o preço preto */
+}
+/* 🌿 Janela de mensagem sobre a loja */
+#aboutPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, var(--gold-light), var(--green-mid), var(--green-dark));
+  color: #000000;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(255,255,255,0.4);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  transition: all 0.4s ease;
+  z-index: 1000;
+  opacity: 0;
+}
+
+#aboutPopup.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+#aboutPopup button {
+  background-color: var(--green-dark);
+  color: black;
+  border: none;
+  border-radius: 8px;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#aboutPopup button:hover {
+  background-color: var(--gold-light);
+  color: black;
+}
+.product-card h4,
+#cartItems h5,
+#cartItems p,
+footer,
+footer a {
+  color: #f5f5f5 !important;
+}
+
+.category-label {
+  color: #ffffff;
+}
+/* 🎯 BOTÕES – cor normal */
+button,
+.product-card button,
+#cartItems button,
+#clearFilter {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+/* 🎯 BOTÕES – hover */
+button:hover,
+.product-card button:hover,
+#cartItems button:hover,
+#clearFilter:hover {
+  background-color: #e5e5e5; /* cinza claro */
+  color: #000000;
+  transform: scale(1.05);
+}
+
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: #ffffff; /* branco */
+  font-size: 0.9rem;
+}
+
+footer .meu-nome {
+  color: #ffffff; /* branco também */
+  font-weight: bold;
+}
+.store-name {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+/* NAV */
+nav.container-fluid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Título */
+.store-name {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Menu */
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+/* Itens */
+nav ul li {
+  list-style: none;
+}
+
+/* Links */
+nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Ícones */
+nav ul li a img {
+  width: 20px;
+  height: 20px;
+  filter: invert(100%);
+  transition: transform 0.2s ease;
+}
+
+/* Hover */
+nav ul li a:hover img {
+  transform: scale(1.15);
+}
+
+/* 📱 MOBILE — mantém lado a lado */
+@media (max-width: 768px) {
+  nav ul {
+    flex-direction: row;   /* 🔥 continua horizontal */
+    gap: 1rem;
+  }
+}
+
+  </style>
+</head>
+<body>
+   <nav class="container-fluid">
+    <strong class="store-name" onclick="showAbout()">E-commerce Store</strong>
+    <ul>
+      <li>
+        <a href="#home" onclick="showPage('home')">
+          <img src="./image/botao-de-inicio.png" alt="Home"> Home
+        </a>
+      </li>
+      <li>
+        <a href="#cart" onclick="showPage('cart')">
+          <img src="./image/vista-lateral-vazia-do-carrinho-de-compras.png" alt="Carrinho"> Carrinho (<span id="cart-count">0</span>)
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="container" id="home-page">
+    <h3 class="Produtos" style="text-align:center;">Produtos</h3>
+
+    <div id="filter-container">
+      <!-- 🔽 Parte do seletor de categorias corrigida -->
+<select id="categoryFilter" onchange="filterProducts()">
+  <option value="all">Todas as Categorias</option>
+  <option value="camisas">Camisas</option>
+  <option value="vestidos">Vestidos</option> <!-- Corrigido fechamento -->
+  <option value="jaquetas">Jaquetas</option>
+  <option value="casacos">Casacos</option>
+  <option value="calcas">Calças</option>
+  <option value="conjuntos">Conjuntos</option>
+</select>
+
+      <input type="text" id="searchInput" placeholder="Pesquisar produto..." oninput="filterProducts()" />
+      <button id="clearFilter" onclick="clearFilters()">Limpar Filtros</button>
+    </div>
+
+    
+    <div class="grid" id="productGrid">
+      <article class="product-card" data-category="jaquetas">
+        <span class="category-label">jaquetas</span>
+        <img src="./image/jaqueta.png" alt="Jaqueta esportiva anos 80" />
+        <h4>Jaqueta esportiva anos 80</h4>
+        <p>R$ 199,90</p>
+        <button onclick="addToCart('Jaqueta esportiva anos 80', 199.90, './image/jaqueta.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="camisas">
+        <span class="category-label">camisas</span>
+        <img src="./image/amarelo.png" alt="Camisa Amarela Vibrante com Detalhes Verdes" />
+        <h4>Camisa Amarela Vibrante com Detalhes Verdes</h4>
+        <p>R$ 95,00</p>
+        <button onclick="addToCart('Camisa Amarela Vibrante com Detalhes Verdes', 95.00, './image/amarelo.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="jaquetas">
+        <span class="category-label">jaquetas</span>
+        <img src="./image/Jaqueta Esportiva Verde e Amarela.png" alt="Jaqueta Olímpica anos 80" />
+        <h4>Jaqueta Olímpica anos 80</h4>
+        <p>R$ 160,90</p>
+        <button onclick="addToCart('Jaqueta Olímpica anos 80', 160.90, './image/Jaqueta Esportiva Verde e Amarela.png')">Adicionar ao Carrinho</button>
+      </article>
+
+       <article class="product-card" data-category="vestidos">
+        <span class="category-label">vestidos</span>
+        <img src="./image/Vestido Amarelo com Detalhes Verdes.png" alt="Vestido Sol de Verão Retrô anos 60" />
+        <h4>Vestido Sol de Verão Retrô anos 60</h4>
+        <p>R$ 185,00</p>
+        <button onclick="addToCart('Vestido Sol de Verão Retrô anos 60', 185.00, './image/Vestido Amarelo com Detalhes Verdes.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="vestidos">
+        <span class="category-label">vestidos</span>
+        <img src="./image/vestido médio.png" alt="Vestido Amarelo Tropical com Detalhes em Verde Folha" />
+        <h4>Vestido Amarelo Tropical com Detalhes em Verde Folha</h4>
+        <p>R$ 199,90</p>
+        <button onclick="addToCart('Vestido Amarelo Tropical com Detalhes em Verde Folha', 199.90, './image/vestido médio.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="vestidos">
+        <span class="category-label">vestidos</span>
+        <img src="./image/verde.png" alt="Vestido psicodélico anos 70" />
+        <h4>Vestido psicodélico anos 70</h4>
+        <p>R$ 199,90</p>
+        <button onclick="addToCart('Vestido psicodélico anos 70', 199.90, './image/verde.png')">Adicionar ao Carrinho</button>
+      </article>
+
+    
+
+    
+
+       
+      <article class="product-card" data-category="conjuntos">
+        <span class="category-label">conjuntos</span>
+        <img src="./image/laranja.png" alt="Traje Festival Masculino Brasil Retrô anos 70" />
+        <h4>Traje Festival Masculino Brasil Retrô anos 70</h4>
+        <p>R$ 199,90</p>
+        <button onclick="addToCart('Traje Festival Masculino Brasil Retrô anos 70', 199.90, './image/laranja.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="conjuntos">
+        <span class="category-label">conjuntos</span>
+        <img src="./image/conjuto verde.png" alt="Vestido Boho Tropical Anos 70" />
+        <h4>Vestido Boho Tropical Anos 70</h4>
+        <p>R$ 299,90</p>
+        <button onclick="addToCart('Vestido Boho Tropical Anos 70', 299.90, './image/conjuto verde.png')">Adicionar ao Carrinho</button>
+      </article>
+      
+      <article class="product-card" data-category="conjuntos">
+        <span class="category-label">conjutos</span>
+        <img src="./image/anos 70.png" alt="Conjunto de roupa estilo anos 70" />
+        <h4>Conjunto de roupa estilo anos 70</h4>
+        <p>R$ 299,90</p>
+        <button onclick="addToCart('Conjunto de roupa estilo anos 70', 299.90, './image/anos 70.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="casacos">
+        <span class="category-label">Casacos</span>
+        <img src="./image/masculino.png" alt="Casaco estilo boho masculino anos 70" />
+        <h4>Casaco estilo boho masculino anos 70</h4>
+        <p>R$ 240,90</p>
+        <button onclick="addToCart('Casaco estilo boho masculino anos 70', 240.90, './image/masculino.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="casacos">
+        <span class="category-label">Casacos</span>
+        <img src="./image/feminino.png" alt="Casaco estilo boho feminino anos 70" />
+        <h4>Casaco estilo boho feminino anos 70</h4>
+        <p>R$ 240,90</p>
+        <button onclick="addToCart('Casaco estilo boho anos 70', 240.90, './image/feminino.png')">Adicionar ao Carrinho</button>
+      </article>
+
+      <article class="product-card" data-category="calcas">
+        <span class="category-label">calças</span>
+        <img src="./image/calça.png" alt="Calça jeans boca de sino estilo anos 70" />
+        <h4>Calça jeans boca de sino estilo anos 70</h4>
+        <p>R$ 119,90</p>
+        <button onclick="addToCart('Casaco estilo boho anos 70', 119.90, './image/calça.png')">Adicionar ao Carrinho</button>
+      </article>
+
+    </div>
+  </main>
+
+  <main class="container" id="cart-page" style="display:none">
+    <h3 class="seucarrinho" style="text-align:center;">Seu Carrinho</h3>
+    <div id="cartItems"></div>
+    <p id="totalPrice" class="totalPrice" style="font-weight: bold; text-align:center;"></p>
+    <div style="text-align:center;">
+      <button onclick="clearCart()">Esvaziar Carrinho</button>
+      <button onclick="finalizePurchase()">Finalizar Compra</button>
+    </div>
+  </main>
+
+  <div id="notification"></div>
+
+  <footer>
+  © <span class="meu-nome">Gabriel Borges</span>. Todos os direitos reservados. • 2025
+  </footer>
+
+
+  <script>
+    function getCart() { return JSON.parse(localStorage.getItem("cart")) || []; }
+    function saveCart(cart) { localStorage.setItem("cart", JSON.stringify(cart)); updateCartCount(); }
+
+    function showNotification(message) {
+      const notif = document.getElementById("notification");
+      notif.textContent = message;
+      notif.classList.add("show");
+      setTimeout(() => notif.classList.remove("show"), 2000);
+    }
+
+    function addToCart(name, price, image) {
+      const cart = getCart();
+      cart.push({ name, price, image });
+      saveCart(cart);
+      showNotification(name + " foi adicionado ao carrinho!");
+    }
+
+    function updateCartCount() {
+      document.getElementById("cart-count").textContent = getCart().length;
+    }
+
+    function showPage(page) {
+      document.getElementById("home-page").style.display = page === "home" ? "block" : "none";
+      document.getElementById("cart-page").style.display = page === "cart" ? "block" : "none";
+      if (page === "cart") renderCart();
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const cartItems = document.getElementById("cartItems");
+      const totalPrice = document.getElementById("totalPrice");
+      cartItems.innerHTML = "";
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        cartItems.innerHTML += `
+          <article>
+            <img src="${item.image}" alt="${item.name}">
+            <div style="flex:1;">
+              <h5>${item.name}</h5>
+              <p>R$ ${item.price.toFixed(2)}</p>
+            </div>
+            <button onclick="removeFromCart(${index})">Remove</button>
+          </article>`;
+      });
+      totalPrice.textContent  = "Total: R$ " + total.toFixed(2);
+    }
+
+    function removeFromCart(index) {
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+      renderCart();
+    }
+
+    function clearCart() {
+      localStorage.removeItem("cart");
+      renderCart();
+      updateCartCount();
+    }
+
+     // ✅ Finalizar compra
+    function finalizePurchase() {
+      const cart = getCart();
+      if (cart.length === 0) {
+        showNotification("Seu carrinho está vazio!");
+        return;
+      }
+      localStorage.removeItem("cart");
+      updateCartCount();
+      renderCart();
+      showNotification("Compra finalizada com sucesso!");
+    }
+
+    // 🔍 Filtro combinado
+    function filterProducts() {
+      const selected = document.getElementById("categoryFilter").value.toLowerCase();
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const products = document.querySelectorAll(".product-card");
+      products.forEach(prod => {
+        const cat = prod.getAttribute("data-category");
+        const name = prod.querySelector("h4").textContent.toLowerCase();
+        const matchCat = selected === "all" || cat.toLowerCase() === selected.toLowerCase();
+        const matchSearch = name.includes(search);
+        prod.style.display = matchCat && matchSearch ? "flex" : "none";
+      });
+    }
+
+    function clearFilters() {
+      document.getElementById("categoryFilter").value = "all";
+      document.getElementById("searchInput").value = "";
+      filterProducts();
+    }
+ 
+
+
+    document.addEventListener("DOMContentLoaded", updateCartCount);
+  </script>
+</body>
+</html>
